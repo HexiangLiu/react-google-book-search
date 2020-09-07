@@ -1,5 +1,4 @@
 const express = require('express');
-
 const mongoose = require('mongoose');
 const routes = require('./routes');
 const app = express();
@@ -29,9 +28,8 @@ mongoose.connect(
   }
 );
 io.on('connection', (socket) => {
-  console.log('user connected');
-  socket.on('saved', (msg) => {
-    console.log(msg);
+  socket.on('saved', ({ title }) => {
+    io.emit('saved', title);
   });
 });
 // Start the API server

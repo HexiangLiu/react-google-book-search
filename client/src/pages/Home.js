@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import alertContext from '../context/alertContext';
 import Jumbotron from '../components/Jumbotron';
 import Card from '../components/Card';
 import Form from '../components/Form';
@@ -17,6 +18,14 @@ class Home extends Component {
     q: '',
     message: 'Search For A Book To Begin!',
   };
+
+  componentDidMount() {
+    const { setAlert } = this.context;
+
+    socket.on('saved', (title) => {
+      setAlert(title);
+    });
+  }
 
   handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -57,7 +66,7 @@ class Home extends Component {
       description: book.volumeInfo.description,
       image: book.volumeInfo.imageLinks.thumbnail,
     }).then(() => {
-      socket.emit('saved', `You just saved a ${book.volumeInfo.title}`);
+      socket.emit('saved', { title: book.volumeInfo.title });
       this.getBooks();
     });
   };
@@ -122,5 +131,7 @@ class Home extends Component {
     );
   }
 }
+
+Home.contextType = alertContext;
 
 export default Home;
